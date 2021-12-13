@@ -66,15 +66,28 @@ class Displacements(list):
 
 
 @click.command()
-@click.argument('source')
-@click.option('--destination', '-o', default=None)
-@click.option('--mode', '-m', default='w')
-@click.option('--threshold', '-t', default=150)
-@click.option('--width', '-w', default=150)
-@click.option('--height', '-h', default=150)
-@click.option('--distance', '-d', default=15)
-@click.option('--lower', '-l', default=2)
-def main(source, destination, mode, threshold, width, height, distance, lower):
+@click.argument('source',
+                help='Path of the file '
+                'from which the image is loaded.')
+@click.option('--destination', '-o', default=None,
+              help='Path of the CSV file to output the data.')
+@click.option('--mode', '-m', default='w',
+              help='CSV writing mode.')
+@click.option('--threshold', '-t', default=150,
+              help='Threshold for binarizing an image.')
+@click.option('--width', '-w', default=150,
+              help='Actual width of the image.')
+@click.option('--height', '-h', default=150,
+              help='Actual height of the image.')
+@click.option('--distance', '-d', default=15,
+              help='Maximum distance a particle can travel '
+              'in one unit time.')
+@click.option('--lower', '-l', default=2,
+              help='Minimum length of change over time '
+              'used in the analysis.')
+def main(source, destination, mode, threshold,
+         width, height, distance, lower
+         ):
     fname = splitext(source)[0]
     if destination is None:
         destination = fname + ".csv"
