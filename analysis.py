@@ -66,9 +66,7 @@ class Displacements(list):
 
 
 @click.command()
-@click.argument('source',
-                help='Path of the file '
-                'from which the image is loaded.')
+@click.argument('source')
 @click.option('--destination', '-o', default=None,
               help='Path of the CSV file to output the data.')
 @click.option('--mode', '-m', default='w',
