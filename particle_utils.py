@@ -50,7 +50,7 @@ class Particle():
 
     def __eq__(self, other):
         if not other:
-          return False
+            return False
         return self.x == other.x and self.y == other.y
 
     def distance_to(self, other):
@@ -86,7 +86,11 @@ class Particle():
         return p if self.distance_to(p) < distance else None
 
     def set_next_particles(self, particles):
-        self.__next_particles = sorted(particles, key=lambda p: self.distance_to(p))
+        '''Registers the particles in the neighborhood at the next time.
+        '''
+        self.__next_particles = sorted(
+            particles, key=lambda p: self.distance_to(p)
+        )
 
     @property
     def prev(self):
@@ -113,6 +117,8 @@ class Particle():
             value.__prev = self
 
     def correct_next(self, distance):
+        '''Corrects the particles for the next time.
+        '''
         index = self.__next_particles.index(self.__next)
         while index + 1 < len(self.__next_particles):
             index += 1
