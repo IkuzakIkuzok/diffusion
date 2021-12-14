@@ -35,6 +35,7 @@ class Particle():
         X = [pt[0][0] for pt in contour]
         Y = [pt[0][1] for pt in contour]
         self.x, self.y = round(np.average(X)), round(np.average(Y))
+        self.__next_particles = None
         self.__prev = None
         self.__next = None
         self.size_coeffs = size_coeffs
@@ -46,6 +47,11 @@ class Particle():
         return self.__class__(
             [[[self.x - other.x, self.y - other.y]]], self.size_coeffs
         )
+
+    def __eq__(self, other):
+        if not other:
+          return False
+        return self.x == other.x and self.y == other.y
 
     def distance_to(self, other):
         '''Calculates the distance to another particle.
@@ -79,6 +85,9 @@ class Particle():
         p = min(particles, key=lambda p: self.distance_to(p))
         return p if self.distance_to(p) < distance else None
 
+    def set_next_particles(self, particles):
+        self.__next_particles = sorted(particles, key=lambda p: self.distance_to(p))
+
     @property
     def prev(self):
         '''A particle that represents the position of the current particle
@@ -102,6 +111,22 @@ class Particle():
         self.__next = value
         if value:
             value.__prev = self
+
+    def correct_next(self, distance):
+        index = self.__next_particles.index(self.__next)
+        while index + 1 < len(self.__next_particles):
+            index += 1
+            p = self.__next_particles[index]
+            d = self.distance_to(p)
+            if d >= distance:
+                return
+            if p.prev:
+                d0 = p.prev.distance_to(p)
+                if d < d0:
+                    p.prev.correct_next()
+                    self.next = p
+                    return
+        self.__next = None
 
     @property
     def displacements(self):
@@ -145,7 +170,21 @@ class Particles(list):
             This method is used to track changes in particles over time.
         '''
         for particle in self:
-            p = particle.find_nearest(particles, distance)
+            particle.set_next_particles(particles)
+            for p in particles:
+                if (d := particle.distance_to(p)) > distance:
+                    return
+                if p.prev:
+                    d0 = p.prev.distance_to(p)
+                    if d < d0:
+                        p.prev.correct_next(distance)
+                        break
+                    else:
+                        continue
+                else:
+                    break
+            else:
+                return
             particle.next = p
 
     @to_list
