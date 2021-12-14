@@ -52,3 +52,7 @@ for %%f in (%SRC%*.gif) do (
   python analysis.py %SRC%%%f -o "%DST%" -m a -l 11
 )
 ```
+
+## TODO
+
+- 複数の粒子が同一のものとして追跡され得るので，全体として整合性のある実装にしなければならない (`Particles.link_next`辺り)
